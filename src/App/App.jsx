@@ -10,11 +10,11 @@ import './App.css';
 
 function App() {
   library.add(fab, far, fas);
-  let initialPages = [
+  const initialPages = [
     {
       id: 1,
       parentTabId: null,
-      canClose: false,
+      canBeClosed: false,
       tab: {
         title: 'Airbnb',
         icon: ['fab', 'airbnb'],
@@ -34,7 +34,7 @@ function App() {
     {
       id: 3,
       parentTabId: null,
-      canClose: true,
+      canBeClosed: true,
       tab: {
         title: 'Address',
         icon: ['far', 'address-card'],
@@ -51,7 +51,7 @@ function App() {
     {
       id: 4,
       parentTabId: 1,
-      canClose: true,
+      canBeClosed: true,
       tab: {
         title: 'Adjust',
         icon: ['fas', 'adjust'],
@@ -69,10 +69,32 @@ function App() {
       },
     },
   ];
-  const [pages, setPages] = useState(initialPages);
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [pages, setPages] = useState(initialPages);
   const tabs = [];
   const tabPanels = [];
+
+  const onTabClose = (closedPage) => {
+    const indexToRemove = pages.indexOf(closedPage);
+    const newPages = [
+      ...pages.slice(0, indexToRemove),
+      ...pages.slice(indexToRemove + 1),
+    ];
+    let newIndex = 0;
+    if (selectedIndex >= indexToRemove) { // to the right
+      newIndex = selectedIndex - 1;
+    } else { // to the left
+      newIndex = selectedIndex;
+    }
+    if (closedPage.parentTabId && pages[selectedIndex].id === closedPage.id) {
+      newIndex = newPages.findIndex(
+        (element) => element.id === closedPage.parentTabId,
+      );
+    }
+    setSelectedIndex(newIndex);
+    setPages(newPages);
+  };
 
   pages.forEach((page) => {
     tabs.push(
@@ -86,8 +108,15 @@ function App() {
         ) : (
           ''
         )}
-        {page.canClose ? (
-          <button className="btn btn-danger btn-xs ml-2" type="button">
+        {page.canBeClosed ? (
+          <button
+            className="btn btn-danger btn-xs ml-2"
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onTabClose(page);
+            }}
+          >
             <FontAwesomeIcon icon={['fas', 'times']} />
           </button>
         ) : (
@@ -104,7 +133,10 @@ function App() {
 
   return (
     <div>
-      <Tabs>
+      <Tabs
+        selectedIndex={selectedIndex}
+        onSelect={(index) => setSelectedIndex(index)}
+      >
         <TabList>{tabs}</TabList>
         {tabPanels}
       </Tabs>
