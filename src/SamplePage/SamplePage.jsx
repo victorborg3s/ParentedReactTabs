@@ -22,7 +22,7 @@ function SamplePage({ addNewPage, goToParent }) {
             className="btn btn-primary m-2"
             onClick={goToParent}
           >
-            I have a father! Click me and i&apos;l show you who is he
+            I have a father! Click me and i&apos;ll show you who is he
           </button>
         )}
       <button

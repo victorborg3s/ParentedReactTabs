@@ -7,6 +7,14 @@ import SamplePage from '../SamplePage';
 import 'react-tabs/style/react-tabs.css';
 import './App.css';
 
+/**
+ * The App is the common ancestor of navigation components and the ```ParentedReactTabs```. So, it
+ * should hold and manage state of pages and tabs. But it doesn't (and shouldn't) know what content
+ * is being drawn on each tab. So, to allow add more tab, it delegates to child tabs through
+ * ```addPage``` method.
+ *
+ * @author [Victor Borges](https://github.com/victorborg3s)
+ */
 function App() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [pages, setPages] = useState([

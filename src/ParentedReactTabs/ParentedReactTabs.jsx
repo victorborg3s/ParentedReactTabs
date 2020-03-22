@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { forbidExtraProps } from 'airbnb-prop-types';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -10,23 +8,16 @@ import {
 } from 'react-tabs';
 
 import CustomTab from './CustomTab';
+import { propTypes, defaultProps } from './ParentedReactTabsProps';
 
 import 'react-tabs/style/react-tabs.css';
 
-const propTypes = forbidExtraProps({
-  addNewPage: PropTypes.func.isRequired,
-  changeToTab: PropTypes.func.isRequired,
-  onIndexChange: PropTypes.func.isRequired,
-  onTabClose: PropTypes.func,
-  pages: PropTypes.array,
-  selectedIndex: PropTypes.number.isRequired,
-});
-
-const defaultProps = {
-  onTabClose: null,
-  pages: [],
-};
-
+/**
+ * Knows how to draw tabs and is respective content that comes strutured into array of objects set
+ * on ```pages``` property.
+ *
+ * @author [Victor Borges](https://github.com/victorborg3s)
+ */
 function ParentedReactTabs({
   addNewPage, changeToTab, onIndexChange, onTabClose, pages, selectedIndex,
 }) {
