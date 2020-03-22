@@ -1,145 +1,91 @@
 import React, { useState } from 'react';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { fab } from '@fortawesome/free-brands-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import uniqid from 'uniqid';
+
+import ParentedReactTabs from '../ParentedReactTabs';
+import SamplePage from '../SamplePage';
+
 import 'react-tabs/style/react-tabs.css';
 import './App.css';
 
 function App() {
-  library.add(fab, far, fas);
-  const initialPages = [
-    {
-      id: 1,
-      parentTabId: null,
-      canBeClosed: false,
-      tab: {
-        title: 'Airbnb',
-        icon: ['fab', 'airbnb'],
-        badge: {
-          type: 'warning',
-          quantity: 8,
-        },
-      },
-      component: {
-        type: 'span',
-        props: {
-          className: 'badge badge-warning text-wrap',
-          children: 'any content 1',
-        },
-      },
-    },
-    {
-      id: 3,
-      parentTabId: null,
-      canBeClosed: true,
-      tab: {
-        title: 'Address',
-        icon: ['far', 'address-card'],
-        badge: null,
-      },
-      component: {
-        type: 'span',
-        props: {
-          className: 'badge badge-secondary text-wrap',
-          children: 'any content 3',
-        },
-      },
-    },
-    {
-      id: 4,
-      parentTabId: 1,
-      canBeClosed: true,
-      tab: {
-        title: 'Adjust',
-        icon: ['fas', 'adjust'],
-        badge: {
-          type: 'primary',
-          quantity: 5,
-        },
-      },
-      component: {
-        type: 'span',
-        props: {
-          className: 'badge badge-primary text-wrap',
-          children: 'any content 4',
-        },
-      },
-    },
-  ];
-
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [pages, setPages] = useState(initialPages);
-  const tabs = [];
-  const tabPanels = [];
+  const [pages, setPages] = useState([]);
 
-  const onTabClose = (closedPage) => {
-    const indexToRemove = pages.indexOf(closedPage);
+  function addPage(id, parentId, canBeClosed, tab, content) {
+    console.log('pages', pages);
+    const newPages = [...pages,
+      {
+        id,
+        parentId,
+        canBeClosed,
+        tab,
+        content,
+      },
+    ];
+    console.log('newPages', newPages);
+    setPages(newPages);
+  }
+
+  function removePage(pageToRemove) {
+    const indexToRemove = pages.indexOf(pageToRemove);
     const newPages = [
       ...pages.slice(0, indexToRemove),
       ...pages.slice(indexToRemove + 1),
     ];
     let newIndex = 0;
-    if (selectedIndex >= indexToRemove) { // to the right
+    if (selectedIndex > indexToRemove) {
       newIndex = selectedIndex - 1;
-    } else { // to the left
+    } else if (selectedIndex < indexToRemove) {
       newIndex = selectedIndex;
-    }
-    if (closedPage.parentTabId && pages[selectedIndex].id === closedPage.id) {
+    } else if (pageToRemove.parentId) {
       newIndex = newPages.findIndex(
-        (element) => element.id === closedPage.parentTabId,
+        (element) => element.id === pageToRemove.parentId,
       );
     }
     setSelectedIndex(newIndex);
     setPages(newPages);
-  };
+  }
 
-  pages.forEach((page) => {
-    tabs.push(
-      <Tab key={page.id}>
-        <FontAwesomeIcon icon={page.tab.icon} />
-        <span className="ml-1">{page.tab.title}</span>
-        {page.tab.badge ? (
-          <span className={`badge badge-${page.tab.badge.type} ml-1`}>
-            {page.tab.badge.quantity}
-          </span>
-        ) : (
-          ''
-        )}
-        {page.canBeClosed ? (
-          <button
-            className="btn btn-danger btn-xs ml-2"
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onTabClose(page);
-            }}
-          >
-            <FontAwesomeIcon icon={['fas', 'times']} />
-          </button>
-        ) : (
-          ''
-        )}
-      </Tab>,
-    );
-    tabPanels.push(
-      <TabPanel key={page.id}>
-        <page.component.type {...page.component.props} />
-      </TabPanel>,
-    );
-  });
+  function changeToTab(tabId) {
+    const nextIndex = pages.findIndex((page) => page.id === tabId);
+    setSelectedIndex(nextIndex);
+  }
+
+  function addASamplePage(parentId) {
+    const newPageId = uniqid('ParentedReactTabsPage');
+    addPage(newPageId, parentId, true, {
+      title: 'Some New Page',
+      icon: ['far', 'file'],
+      badge: {
+        type: ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'][Math.floor(Math.random() * 8)],
+        quantity: Math.floor(Math.random() * 10),
+      },
+    },
+      <SamplePage
+        addPage={() => addASamplePage(parentId)}
+        goToParent={!parentId ? undefined : () => changeToTab(parentId)}
+      />);
+  }
 
   return (
-    <div>
-      <Tabs
-        selectedIndex={selectedIndex}
-        onSelect={(index) => setSelectedIndex(index)}
-      >
-        <TabList>{tabs}</TabList>
-        {tabPanels}
-      </Tabs>
+    <div className="container">
+      <div className="row">
+        <div className="col">
+          <SamplePage
+            addPage={() => addASamplePage(null)}
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col">
+          <ParentedReactTabs
+            pages={pages}
+            selectedIndex={selectedIndex}
+            onTabClose={removePage}
+            onIndexChange={(newIndex) => setSelectedIndex(newIndex)}
+          />
+        </div>
+      </div>
     </div>
   );
 }
