@@ -5,10 +5,12 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Tab, Tabs, TabList, TabPanel,
 } from 'react-tabs';
+
+import CustomTab from './CustomTab';
+
 import 'react-tabs/style/react-tabs.css';
 
 const propTypes = forbidExtraProps({
@@ -36,29 +38,13 @@ function ParentedReactTabs({
   pages.forEach((page) => {
     tabs.push(
       <Tab key={page.id}>
-        <FontAwesomeIcon icon={page.tab.icon} />
-        <span className="ml-1">{page.tab.title}</span>
-        {page.tab.badge ? (
-          <span className={`badge badge-${page.tab.badge?.type} ml-1`}>
-            {page.tab.badge?.quantity}
-          </span>
-        ) : (
-          ''
-        )}
-        {page.canBeClosed ? (
-          <button
-            className="btn btn-danger btn-xs ml-2"
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onTabClose(page);
-            }}
-          >
-            <FontAwesomeIcon icon={['fas', 'times']} />
-          </button>
-        ) : (
-          ''
-        )}
+        <CustomTab
+          tab={page.tab}
+          onTabClose={!page.canBeClosed ? undefined : (event) => {
+            event.stopPropagation();
+            onTabClose(page);
+          }}
+        />
       </Tab>,
     );
     tabPanels.push(
