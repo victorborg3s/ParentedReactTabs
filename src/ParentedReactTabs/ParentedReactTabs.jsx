@@ -12,6 +12,8 @@ import {
 import 'react-tabs/style/react-tabs.css';
 
 const propTypes = forbidExtraProps({
+  addNewPage: PropTypes.func.isRequired,
+  changeToTab: PropTypes.func.isRequired,
   onIndexChange: PropTypes.func.isRequired,
   onTabClose: PropTypes.func,
   pages: PropTypes.array,
@@ -24,7 +26,7 @@ const defaultProps = {
 };
 
 function ParentedReactTabs({
-  onIndexChange, onTabClose, pages, selectedIndex,
+  addNewPage, changeToTab, onIndexChange, onTabClose, pages, selectedIndex,
 }) {
   library.add(fab, far, fas);
 
@@ -61,7 +63,16 @@ function ParentedReactTabs({
     );
     tabPanels.push(
       <TabPanel key={page.id}>
-        {page.content}
+        {React.createElement(
+          page.component.type,
+          {
+            ...page.component.props,
+            addNewPage: (canBeClosed, tab, component) => {
+              addNewPage(page.id, canBeClosed, tab, component);
+            },
+            goToParent: !page.parentId ? undefined : () => changeToTab(page.parentId),
+          },
+        )}
       </TabPanel>,
     );
   });

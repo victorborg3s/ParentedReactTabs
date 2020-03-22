@@ -9,20 +9,33 @@ import './App.css';
 
 function App() {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [pages, setPages] = useState([]);
+  const [pages, setPages] = useState([
+    {
+      id: uniqid('ParentedReactTabsPage'),
+      parentId: undefined,
+      canBeClosed: false,
+      tab: {
+        title: 'Some New Page',
+        icon: ['far', 'file'],
+        badge: {
+          type: ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'][Math.floor(Math.random() * 8)],
+          quantity: Math.floor(Math.random() * 10),
+        },
+      },
+      component: { type: SamplePage },
+    },
+  ]);
 
-  function addPage(id, parentId, canBeClosed, tab, content) {
-    console.log('pages', pages);
+  function addPage(parentId, canBeClosed, tab, component) {
     const newPages = [...pages,
       {
-        id,
+        id: uniqid('ParentedReactTabsPage'),
         parentId,
         canBeClosed,
         tab,
-        content,
+        component,
       },
     ];
-    console.log('newPages', newPages);
     setPages(newPages);
   }
 
@@ -48,34 +61,11 @@ function App() {
 
   function changeToTab(tabId) {
     const nextIndex = pages.findIndex((page) => page.id === tabId);
-    setSelectedIndex(nextIndex);
-  }
-
-  function addASamplePage(parentId) {
-    const newPageId = uniqid('ParentedReactTabsPage');
-    addPage(newPageId, parentId, true, {
-      title: 'Some New Page',
-      icon: ['far', 'file'],
-      badge: {
-        type: ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'][Math.floor(Math.random() * 8)],
-        quantity: Math.floor(Math.random() * 10),
-      },
-    },
-      <SamplePage
-        addPage={() => addASamplePage(parentId)}
-        goToParent={!parentId ? undefined : () => changeToTab(parentId)}
-      />);
+    setSelectedIndex(nextIndex === -1 ? 0 : nextIndex);
   }
 
   return (
     <div className="container">
-      <div className="row">
-        <div className="col">
-          <SamplePage
-            addPage={() => addASamplePage(null)}
-          />
-        </div>
-      </div>
       <div className="row">
         <div className="col">
           <ParentedReactTabs
@@ -83,6 +73,8 @@ function App() {
             selectedIndex={selectedIndex}
             onTabClose={removePage}
             onIndexChange={(newIndex) => setSelectedIndex(newIndex)}
+            addNewPage={addPage}
+            changeToTab={changeToTab}
           />
         </div>
       </div>
