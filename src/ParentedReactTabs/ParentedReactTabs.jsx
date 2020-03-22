@@ -40,8 +40,7 @@ function ParentedReactTabs({
       <Tab key={page.id}>
         <CustomTab
           tab={page.tab}
-          onTabClose={!page.canBeClosed ? undefined : (event) => {
-            event.stopPropagation();
+          onTabClose={!page.canBeClosed ? undefined : () => {
             onTabClose(page);
           }}
         />

@@ -30,7 +30,7 @@ function CustomTab({ tab, onTabClose }) {
           className="btn btn-danger btn-xs ml-2"
           type="button"
           onClick={(event) => {
-            event.stopPropagation();
+            if (event) event.stopPropagation();
             onTabClose();
           }}
         >
