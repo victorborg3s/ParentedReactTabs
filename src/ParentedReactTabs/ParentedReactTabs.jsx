@@ -43,7 +43,7 @@ function ParentedReactTabs({
           page.component.type,
           {
             ...page.component.props,
-            addNewPage: (canBeClosed, tab, component) => {
+            addNewChildPage: (canBeClosed, tab, component) => {
               addNewPage(page.id, canBeClosed, tab, component);
             },
             goToParent: !page.parentId ? undefined : () => changeToTab(page.parentId),

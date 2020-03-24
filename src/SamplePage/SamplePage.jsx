@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { forbidExtraProps } from 'airbnb-prop-types';
 
 const propTypes = forbidExtraProps({
-  addNewPage: PropTypes.func.isRequired,
+  addNewChildPage: PropTypes.func.isRequired,
   goToParent: PropTypes.func,
 });
 
@@ -11,7 +11,7 @@ const defaultProps = {
   goToParent: undefined,
 };
 
-function SamplePage({ addNewPage, goToParent }) {
+function SamplePage({ addNewChildPage, goToParent }) {
   return (
     <div>
       {!goToParent
@@ -28,7 +28,7 @@ function SamplePage({ addNewPage, goToParent }) {
       <button
         type="button"
         className="btn btn-primary m-2"
-        onClick={() => addNewPage(
+        onClick={() => addNewChildPage(
           true,
           {
             title: 'Some New Page',

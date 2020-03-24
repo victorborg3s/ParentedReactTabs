@@ -16,7 +16,9 @@ const defaultProps = {
 function CustomTab({ tab, onTabClose }) {
   return (
     <>
-      <FontAwesomeIcon icon={tab.icon} />
+      {tab.icon
+        ? <FontAwesomeIcon icon={tab.icon} />
+        : ''}
       <span className="ml-1">{tab.title}</span>
       {tab.badge ? (
         <span className={`badge badge-${tab.badge?.type} ml-1`}>

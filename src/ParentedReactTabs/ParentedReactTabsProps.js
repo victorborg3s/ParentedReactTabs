@@ -65,7 +65,7 @@ export const propTypes = forbidExtraProps({
    * where:
    * @param page is one element of ```pages``` property to be removed
    */
-  onTabClose: PropTypes.func,
+  onTabClose: PropTypes.func.isRequired,
   /**
    * A array of pages to be drawn with the following struture:
    *
@@ -95,6 +95,5 @@ export const propTypes = forbidExtraProps({
 });
 
 export const defaultProps = {
-  onTabClose: null,
   pages: [],
 };
